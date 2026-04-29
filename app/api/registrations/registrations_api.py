@@ -2,10 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.data_access.db.session import get_db
-from app.api.registrations.registrations_schemas import RegistrationCreate, RegistrationRead
 from app.data_access.registrations.registrations_repository import RegistrationRepository
 from app.business_logic.registrations.registrations_service import RegistrationService
-
+from app.api.registrations.registrations_schemas import (
+    RegistrationCreate,
+    RegistrationRead,
+    RegistrationUpdate,
+    UserRegistrationEventRead,
+)
 
 router = APIRouter()
 
@@ -26,7 +30,7 @@ async def create_registration(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/users/{user_id}/registrations", response_model=list[RegistrationRead])
+@router.get("/users/{user_id}/registrations", response_model=list[UserRegistrationEventRead])
 async def get_user_registrations(
     user_id: int,
     service: RegistrationService = Depends(get_registration_service)
@@ -49,5 +53,17 @@ async def delete_registration(
     try:
         await service.delete_registration(registration_id)
         return {"message": "Registration deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+
+@router.put("/registrations/{registration_id}", response_model=RegistrationRead)
+async def update_registration(
+    registration_id: int,
+    data: RegistrationUpdate,
+    service: RegistrationService = Depends(get_registration_service)
+):
+    try:
+        return await service.update_registration(registration_id, data.model_dump(exclude_unset=True))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

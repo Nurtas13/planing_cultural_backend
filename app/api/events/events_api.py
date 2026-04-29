@@ -37,3 +37,14 @@ async def create_event(
     service: EventService = Depends(get_event_service)
 ):
     return await service.create_event(event_data)
+
+@router.delete("/events/{event_id}")
+async def delete_event(
+    event_id: int,
+    service: EventService = Depends(get_event_service)
+):
+    try:
+        await service.delete_event(event_id)
+        return {"message": "Event deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))

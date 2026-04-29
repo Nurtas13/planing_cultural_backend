@@ -13,3 +13,11 @@ class EventService:
 
     async def create_event(self, event_data):
         return await self.repository.create_event(event_data)
+    
+    async def delete_event(self, event_id: int):
+        event = await self.repository.delete_event(event_id)
+
+        if not event:
+            raise ValueError("Event not found")
+
+        return event

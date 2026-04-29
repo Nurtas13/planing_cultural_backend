@@ -3,6 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.api_router import api_router
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+print("OPENAI_API_KEY =", os.getenv("OPENAI_API_KEY"))
 
 app = FastAPI(title="Cultural Events Planning API")
 

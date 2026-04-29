@@ -24,3 +24,14 @@ class EventRepository:
         await self.db.commit()
         await self.db.refresh(new_event)
         return new_event
+    
+    async def delete_event(self, event_id: int):
+        event = await self.db.get(Event, event_id)
+
+        if not event:
+            return None
+
+        await self.db.delete(event)
+        await self.db.commit()
+
+        return event

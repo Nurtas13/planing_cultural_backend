@@ -14,13 +14,21 @@ class RegistrationService:
         return await self.repository.create_registration(registration_data)
 
     async def get_user_registrations(self, user_id: int):
-        return await self.repository.get_user_registrations(user_id)
+        return await self.repository.get_user_registrations_with_events(user_id)
 
     async def get_all_registrations(self):
         return await self.repository.get_all()
 
     async def delete_registration(self, registration_id: int):
         registration = await self.repository.delete_registration(registration_id)
+
+        if not registration:
+            raise ValueError("Registration not found")
+
+        return registration
+    
+    async def update_registration(self, registration_id: int, data):
+        registration = await self.repository.update_registration(registration_id, data)
 
         if not registration:
             raise ValueError("Registration not found")
