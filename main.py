@@ -19,6 +19,13 @@ print("OPENAI_API_KEY =", os.getenv("OPENAI_API_KEY"))
 app = FastAPI(title="Cultural Events Planning API")
 
 
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+app.include_router(api_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,5 +39,3 @@ app.add_middleware(
 async def health_check():
     return {"status": "ok"}
 
-
-app.include_router(api_router)
