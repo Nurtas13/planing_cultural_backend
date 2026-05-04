@@ -21,7 +21,6 @@ app = FastAPI(title="Cultural Events Planning API")
 @app.on_event("startup")
 async def on_startup():
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
 app.include_router(api_router)
