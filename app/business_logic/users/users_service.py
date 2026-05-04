@@ -41,3 +41,30 @@ class UserService:
             raise ValueError("User not found")
 
         return user
+    
+    async def delete_user_by_email(self, delete_data):
+        user = await self.repository.get_user_by_email(delete_data.email)
+
+        if not user:
+            raise ValueError("User not found")
+
+        if user.password_hash != delete_data.password:
+            raise ValueError("Invalid email or password")
+
+        await self.repository.delete_user(user)
+        return True
+    
+    async def google_login(self, google_data):
+        user = await self.repository.get_user_by_email(google_data.email)
+
+        if user:
+            return user
+
+        data = {
+            "full_name": google_data.full_name,
+            "email": google_data.email,
+            "password_hash": "google_auth",
+            "phone": None,
+        }
+
+        return await self.repository.create_user_from_dict(data)

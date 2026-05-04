@@ -50,3 +50,8 @@ class UserRepository:
         await self.db.commit()
         await self.db.refresh(new_user)
         return new_user
+    
+    async def delete_user(self, user):
+        await self.db.delete(user)
+        await self.db.commit()
+        return True
