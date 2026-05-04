@@ -39,3 +39,9 @@ app.add_middleware(
 async def health_check():
     return {"status": "ok"}
 
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)   # 💥 удалить таблицы
+        await conn.run_sync(Base.metadata.create_all) # создать заново
+
