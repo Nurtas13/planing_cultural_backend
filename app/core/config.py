@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import os
 
 
 class Settings(BaseSettings):
@@ -8,11 +9,17 @@ class Settings(BaseSettings):
     DB_USER: str = "postgres"
     DB_PASSWORD: str = "1"
 
-
-    OPENAI_API_KEY: str
+    OPENAI_API_KEY: str | None = None
 
     @property
     def DATABASE_URL(self) -> str:
+        database_url = os.getenv("DATABASE_URL")
+
+        # 👉 если есть Render DB — используем её
+        if database_url:
+            return database_url.replace("postgresql://", "postgresql+asyncpg://")
+
+        # 👉 если нет (локально) — используем старую
         return (
             f"postgresql+asyncpg://"
             f"{self.DB_USER}:{self.DB_PASSWORD}"
