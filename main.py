@@ -1,3 +1,9 @@
+from app.data_access.db.base import Base
+from app.data_access.db.session import engine
+
+from app.data_access.models.user import User
+from app.data_access.models.event import Event
+from app.data_access.models.registration import Registration
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
